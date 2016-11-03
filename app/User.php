@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-
+use Uuid;
 class User extends Authenticatable
 {
     use Notifiable;
@@ -14,8 +14,20 @@ class User extends Authenticatable
      *
      * @var array
      */
+     // Disable Auto_Incrementing Values For The Model in The ID Column
+    public $incrementing = false;
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            $model->{$model->getKeyName()} = Uuid::generate()->string;
+        });
+    }
+
     protected $fillable = [
-        'name', 'email', 'password',
+        'first', 'last', 'clef_id', 'email', 'password', 'logged_out_at'
     ];
 
     /**
@@ -26,4 +38,5 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
 }
